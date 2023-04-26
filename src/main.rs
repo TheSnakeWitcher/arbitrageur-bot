@@ -8,18 +8,17 @@
 // TODO: search book "what things are called"
 mod addresses;
 mod assets;
-mod aux;
 mod configuration;
 mod contracts;
-mod dexs;
 mod db;
+mod dexs;
 mod watchers;
 
 use assets::Asset;
 use ethers::providers::{Http, Middleware, Provider};
+use redis::{Client, Connection};
 use std::{sync::Arc, thread, time};
 use watchers::Watcher;
-use redis::{Client,Connection};
 
 const POLLING_INTERVAL: u64 = 15_000;
 
@@ -54,8 +53,10 @@ async fn main() -> Result<(), ()> {
     ////////////////////////////////////////////////////////////////////////////
 
     println!("init assets...");
-    let trade_assets: Vec<Asset> = assets::vec_from_addresses(trade_assets_addresses, &provider,&mut db_conn).await;
-    let loan_assets: Vec<Asset> = assets::vec_from_addresses(loan_assets_addresses, &provider,&mut db_conn).await;
+    let trade_assets: Vec<Asset> =
+        assets::vec_from_addresses(trade_assets_addresses, &provider, &mut db_conn).await;
+    let loan_assets: Vec<Asset> =
+        assets::vec_from_addresses(loan_assets_addresses, &provider, &mut db_conn).await;
 
     println!("loan assets:\n");
     loan_assets
@@ -122,7 +123,7 @@ async fn main() -> Result<(), ()> {
             if let Err(err) = watcher.watch().await {
                 println!("error ocurred: {:?}", err);
                 continue;
-            } 
+            }
         }
         println!("iteration completed...");
         thread::sleep(time::Duration::from_millis(POLLING_INTERVAL));
