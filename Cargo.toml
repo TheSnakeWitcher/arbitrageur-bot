@@ -1,0 +1,31 @@
+[package]
+name = "arbitrageur"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+config = "0.13.3"
+dirs = "4.0.0"
+ethers = "2.0.1"
+redis = { version = "0.22.3", features = ["tokio-comp"] }
+serde = { version = "1.0.158", features = ["derive"] }
+serde_json = "1.0.94"
+tabled = "0.10.0"
+tokio = "1.26.0"
+tracing = { version = "0.1.37", features = ["log"] }
+
+[profile.dev]
+incremental = true
+
+[profile.test]
+incremental = true
+
+[profile.release]
+# incremental = true
+lto = true          # Enable link-time optimization,options: "fat","thin"
+opt-level = 'z'     # Optimize for size
+#codegen-units = 1   # Reduce number of codegen units to increase optimizations
+strip = true        # Strip symbols from binary*
+panic = 'abort'     # Abort on panic
